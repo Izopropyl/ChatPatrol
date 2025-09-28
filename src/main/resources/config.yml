@@ -20,3 +20,9 @@ caps-notification: true
 punishments:
   blacklisted-words-command: "ban {player} You were banned for using inappropriate language!"
   spam-command: "kick {player} You were kicked for spamming!"
+
+# AUTO HELP RESPONSE  
+enable-help-reply: true
+help-response: "To recieve help type /support"  
+help-words:
+  - "admin"

@@ -4,7 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.ItemStack;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -46,6 +51,69 @@ public class ChatListener implements Listener {
         if (plugin.getConfig().getBoolean("enable-caps-filter")) {
             checkForExcessiveCaps(event, player, originalMessage);
         }
+        // Check for help request
+        if (plugin.getConfig().getBoolean("enable-help-reply")) {
+            checkForHelp(event, player, message);
+        }
+    }
+    
+    @EventHandler
+    public void onAnvilRename(InventoryClickEvent event) {
+        if (!(event.getInventory() instanceof AnvilInventory)) return;
+        if (event.getSlotType() != InventoryType.SlotType.RESULT) return;
+
+        Player player = (Player) event.getWhoClicked();
+        ItemStack result = event.getCurrentItem();
+        if (result == null || !result.hasItemMeta() || !result.getItemMeta().hasDisplayName()) return;
+
+        String displayName = result.getItemMeta().getDisplayName().toLowerCase();
+        List<String> blacklistedWords = plugin.getConfig().getStringList("blacklisted-words");
+
+        for (String word : blacklistedWords) {
+            if (displayName.contains(word)) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.RED + "You cannot name items with inappropriate words.");
+                logPunishment(player, "Anvil Rename", displayName);
+
+                // Run punishment command
+                String punishmentCommand = plugin.getConfig().getString("punishments.blacklisted-words-command");
+                if (punishmentCommand != null && !punishmentCommand.isEmpty()) {
+                    String finalCommand = punishmentCommand.replace("{player}", player.getName());
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
+                    });
+                }
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSignChange(SignChangeEvent event) {
+        Player player = event.getPlayer();
+        List<String> blacklistedWords = plugin.getConfig().getStringList("blacklisted-words");
+
+        for (int i = 0; i < event.getLines().length; i++) {
+            String line = event.getLine(i).toLowerCase();
+
+            for (String word : blacklistedWords) {
+                if (line.contains(word)) {
+                    event.setCancelled(true);
+                    player.sendMessage(ChatColor.RED + "Your sign contains inappropriate language and was not placed.");
+                    logPunishment(player, "Sign Text", line);
+
+                    // Run punishment command
+                    String punishmentCommand = plugin.getConfig().getString("punishments.blacklisted-words-command");
+                    if (punishmentCommand != null && !punishmentCommand.isEmpty()) {
+                        String finalCommand = punishmentCommand.replace("{player}", player.getName());
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand);
+                        });
+                    }
+                    return;
+                }
+            }
+        }
     }
 
     
@@ -72,6 +140,22 @@ public class ChatListener implements Listener {
             }
         }
     }
+    private void checkForHelp(AsyncPlayerChatEvent event, Player player, String message) {
+        // Get help words from the config
+        List<String> helpWords = plugin.getConfig().getStringList("help-words");
+        
+        String responseMessage = plugin.getConfig().getString("help-response");
+        String[] wordsInMessage = message.split("\\s+");
+
+        // Check if any word in the message matches a help word
+        for (String word : wordsInMessage) {
+            if (helpWords.contains(word.toLowerCase())) { // Ensure case-insensitivity
+                player.sendMessage(ChatColor.AQUA + responseMessage);
+                return; // Exit after sending the message
+            }
+        }
+    }
+ 
   
     private void checkForSpam(AsyncPlayerChatEvent event, Player player, UUID playerUUID) {
         long currentTime = System.currentTimeMillis();
