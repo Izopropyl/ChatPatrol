@@ -4,59 +4,116 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.jamplifier</groupId>
-    <artifactId>SimpleChatFilter</artifactId>
-    <version>2.0</version>
+    <artifactId>ChatPatrol</artifactId>
+    <version>2.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>ChatPatrol</name>
+    <description>ChatPatrol moderation plugin</description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+        <proguard.version>7.5.0</proguard.version>
     </properties>
 
-    <dependencies>
-        <!-- Spigot API Dependency -->
-       <dependency>
-    <groupId>io.papermc.paper</groupId>
-    <artifactId>paper-api</artifactId>
-    <version>1.21.1-R0.1-SNAPSHOT</version>
-    <scope>provided</scope>
-</dependency>
-      
-    </dependencies>
-
     <repositories>
-        <!-- Spigot Repository -->
-         <repository>
+        <repository>
             <id>papermc</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
     </repositories>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <build>
+        <finalName>ChatPatrol</finalName>
+
         <plugins>
-            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
+                    <release>${maven.compiler.target}</release>
                 </configuration>
             </plugin>
 
-            <!-- Maven Jar Plugin -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>com.github.wvengen</groupId>
+                <artifactId>proguard-maven-plugin</artifactId>
+                <version>2.7.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>proguard</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Main-Class>com.jamplifier.ChatPatrol</Main-Class>
-                        </manifestEntries>
-                    </archive>
+                    <proguardVersion>${proguard.version}</proguardVersion>
+                    <injar>${project.build.finalName}.jar</injar>
+                    <outjar>${project.build.finalName}-2.0.0.jar</outjar>
+                    <obfuscate>true</obfuscate>
+                    <attach>true</attach>
+                    <attachArtifactClassifier>2.0.0</attachArtifactClassifier>
+
+                    <options>
+                        <option>-dontshrink</option>
+                        <option>-dontoptimize</option>
+                        <option>-adaptclassstrings</option>
+                        <option>-dontnote</option>
+                        <option>-dontwarn</option>
+
+                        <!-- Keep plugin entrypoint -->
+                        <option>-keep public class com.simplesetupmc.chatpatrol.MainClass extends org.bukkit.plugin.java.JavaPlugin { *; }</option>
+
+                        <!-- Keep Bukkit/Paper lifecycle methods -->
+                        <option>-keepclassmembers class * extends org.bukkit.plugin.java.JavaPlugin {
+                            public void onEnable();
+                            public void onDisable();
+                        }</option>
+
+                        <!-- Keep command executors/listeners if reflection ever matters -->
+                        <option>-keepclassmembers class * implements org.bukkit.event.Listener { *; }</option>
+                        <option>-keepclassmembers class * implements org.bukkit.command.CommandExecutor { *; }</option>
+
+                        <!-- Keep enum values -->
+                        <option>-keepclassmembers enum * {
+                            public static **[] values();
+                            public static ** valueOf(java.lang.String);
+                        }</option>
+
+                        <!-- Keep annotations and signatures -->
+                        <option>-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod</option>
+                        <option>-keepattributes Record</option>
+                    </options>
+
+                    <libs>
+                        <lib>${java.home}/jmods/java.base.jmod</lib>
+                        <lib>${java.home}/jmods/java.logging.jmod</lib>
+                    </libs>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.guardsquare</groupId>
+                        <artifactId>proguard-base</artifactId>
+                        <version>${proguard.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>

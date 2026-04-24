@@ -1,6 +1,6 @@
 name: ChatPatrol
-main: com.jamplifier.ChatPatrol
-version: 1.3
+main: com.simplesetupmc.chatpatrol.MainClass
+version: 2.0.0
 api-version: 1.16
 description: A plugin to monitor and control chat using blacklisted words.
 

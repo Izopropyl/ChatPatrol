@@ -1,0 +1,29 @@
+package com.simplesetupmc.chatpatrol.managers;
+
+import com.simplesetupmc.chatpatrol.MainClass;
+import org.bukkit.entity.Player;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class LogManager {
+
+    private final MainClass plugin;
+
+    public LogManager(MainClass plugin) {
+        this.plugin = plugin;
+    }
+
+    public void logPunishment(Player player, String reason, String message) {
+        File punishmentsFile = new File(plugin.getDataFolder(), "punishments.txt");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(punishmentsFile, true))) {
+            writer.write("Player: " + player.getName() + " | Reason: " + reason + " | Message: " + message);
+            writer.newLine();
+        } catch (IOException e) {
+            plugin.getLogger().severe("Failed to write to punishments.txt: " + e.getMessage());
+        }
+    }
+}

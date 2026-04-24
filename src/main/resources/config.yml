@@ -1,28 +1,23 @@
 # CHAT PATROL CONFIGURATION | BY JAMPLIFIER
+# SUPPORT http://discord.gg/simplestudio
 
 # WORD FILTER
-enable-word-filter: true
-blacklisted-words:
+ENABLE-WORD-FILTER: true
+BLACKLISTED-WORDS:
   - "badword1"
   - "badword2"
 
 # SPAM FILTER
-enable-spam-filter: true
-spam-threshold: 3 # Number of messages allowed in a short time period
-spam-time-window: 10 # Time window (seconds) to check for spam
+ENABLE-SPAM-FILTER: true
+SPAM-THRESHOLD: 5
+SPAM-TIME-WINDOW: 4
 
 # CAPS LOCK FILTER
-enable-caps-filter: true
-caps-threshold: 3 # Maximum allowed uppercase letters in a message
-caps-notification: true
+ENABLE-CAPS-FILTER: true
+CAPS-THRESHOLD: 3
+CAPS-NOTIFICATION: true
 
 # COMMAND TO EXECUTE FOR PUNISHMENTS
-punishments:
-  blacklisted-words-command: "ban {player} You were banned for using inappropriate language!"
-  spam-command: "kick {player} You were kicked for spamming!"
-
-# AUTO HELP RESPONSE  
-enable-help-reply: true
-help-response: "To recieve help type /support"  
-help-words:
-  - "admin"
+PUNISHMENTS:
+  BLACKLISTED-WORDS-COMMAND: "ban {player} You were banned for using inappropriate language!"
+  SPAM-COMMAND: "kick {player} You were kicked for spamming!"
