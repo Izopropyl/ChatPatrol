@@ -3,6 +3,7 @@ main: com.simplesetupmc.chatpatrol.MainClass
 version: 2.0.1
 api-version: 1.16
 description: A plugin to monitor and control chat using blacklisted words.
+folia-supported: true
 
 commands:
   chatpatrol:
