@@ -2,8 +2,8 @@ package com.simplesetupmc.chatpatrol.checks;
 
 import com.simplesetupmc.chatpatrol.MainClass;
 import com.simplesetupmc.chatpatrol.managers.ConfigManager;
+import com.simplesetupmc.chatpatrol.managers.ScheduleManager;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -25,9 +25,7 @@ public class CapsCheck {
             event.setMessage(message.toLowerCase());
 
             if (configManager.isCapsNotificationEnabled()) {
-                Bukkit.getScheduler().runTask(plugin, () ->
-                        player.sendMessage(ChatColor.YELLOW + "Your message contained too many capital letters and was modified.")
-                );
+                ScheduleManager.run(plugin, () -> player.sendMessage(ChatColor.YELLOW + "Your message contained too many capital letters and was modified."));
             }
         }
     }

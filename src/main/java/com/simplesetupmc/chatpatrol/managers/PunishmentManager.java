@@ -19,8 +19,7 @@ public class PunishmentManager {
 
         String finalCommand = command.replace("{player}", player.getName());
 
-        Bukkit.getScheduler().runTask(plugin, () ->
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand)
-        );
+        ScheduleManager.run(plugin, () ->
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand));
     }
 }
