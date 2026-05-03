@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.simplesetupmc.chatpatrol.commands.Reload;
 import com.simplesetupmc.chatpatrol.listeners.AnvilListener;
+import com.simplesetupmc.chatpatrol.listeners.BookListener;
 import com.simplesetupmc.chatpatrol.listeners.ChatListener;
 import com.simplesetupmc.chatpatrol.listeners.SignListener;
 import com.simplesetupmc.chatpatrol.managers.ConfigManager;
@@ -21,6 +22,7 @@ public class MainClass extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new SignListener(this), this);
         getServer().getPluginManager().registerEvents(new AnvilListener(this), this);
+        getServer().getPluginManager().registerEvents(new BookListener(this), this);
 
         PluginCommand command = getCommand("chatpatrol");
         if (command != null) {
