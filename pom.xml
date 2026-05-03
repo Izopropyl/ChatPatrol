@@ -69,7 +69,7 @@
                     <outjar>${project.build.finalName}-2.0.0.jar</outjar>
                     <obfuscate>true</obfuscate>
                     <attach>true</attach>
-                    <attachArtifactClassifier>2.0.0</attachArtifactClassifier>
+                    <attachArtifactClassifier>2.0.1</attachArtifactClassifier>
 
                     <options>
                         <option>-dontshrink</option>
